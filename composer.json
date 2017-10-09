@@ -1,0 +1,17 @@
+{
+    "name": "elpadi/simple-web-search",
+    "description": "Pluggable web search using crawler and database full text search.",
+    "type": "library",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "carlos (minimal)",
+            "email": "padi_05@yahoo.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "spatie/crawler": "^2.5",
+        "ext-sqlite3": "*"
+    }
+}
