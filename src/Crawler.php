@@ -9,6 +9,7 @@ abstract class Crawler implements CrawlObserver {
 	protected $url;
 	protected $indexer;
 	protected $recordClassname;
+	protected $index = 0;
 
 	public function __construct(string $url, $recordClassname) {
 		$this->url = $url;
@@ -31,7 +32,8 @@ abstract class Crawler implements CrawlObserver {
 
 	public function hasBeenCrawled(Url $url, $response, Url $foundOnUrl = null) {
 		$record = $this->createRecord((string)$url, (string)($response->getBody()));
-		$this->indexer->set($record);
+		if ($this->index) $this->index++;
+		$this->indexer->set($record, $this->index);
 	}
 
 	public function finishedCrawling() {

@@ -14,6 +14,7 @@ class Spatie extends \SimpleSearch\Crawler {
 	}
 
 	public function start(string $url='') {
+		if (empty($url)) $this->index = 1;
 		$this->spatie->startCrawling($url ? $url : $this->url);
 	}
 

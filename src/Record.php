@@ -9,9 +9,9 @@ abstract class Record {
 	protected $url;
 	protected $title;
 	protected $description;
-	protected $content;
+	protected $pageContent;
 
-	public static $properties = ['url','title','description','content'];
+	public static $properties = ['url','title','description','pageContent'];
 
 	public function __construct(string $url, string $html) {
 		$this->url = $url;
