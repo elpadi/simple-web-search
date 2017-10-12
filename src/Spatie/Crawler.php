@@ -1,14 +1,13 @@
 <?php
-namespace SimpleSearch\Crawlers;
+namespace SimpleSearch\Spatie;
 
-use SimpleSearch\Record;
-use Spatie\Crawler\Crawler;
+use Spatie\Crawler\Crawler as SpatieCrawler;
 use Spatie\Crawler\CrawlInternalUrls;
 
-class Spatie extends \SimpleSearch\Crawler {
+class Crawler extends \SimpleSearch\Crawler {
 
-	public function init(array $clientConfig) {
-		$this->spatie = Crawler::create($clientConfig);
+	public function init(array $clientConfig=[]) {
+		$this->spatie = SpatieCrawler::create($clientConfig);
 		$this->spatie->setCrawlProfile(new CrawlInternalUrls($this->url));
 		$this->spatie->setCrawlObserver($this);
 	}

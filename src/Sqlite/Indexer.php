@@ -1,18 +1,15 @@
 <?php
-namespace SimpleSearch\Indexers;
+namespace SimpleSearch\Sqlite;
 
-use Psr\Http\Message\RequestInterface;
-use Functional as F;
 use SimpleSearch\Record;
-use SimpleSearch\Indexer;
 
-class Sqlite implements Indexer {
+abstract class Indexer implements \SimpleSearch\Indexer {
 
 	protected $db;
 	protected $storagePath;
 
-	protected $primary = 'url';
-	protected $searchable = ['title','description','pageContent'];
+	protected $primary = '';
+	protected $searchable = [];
 	protected $rowId = 0;
 
 	public function __construct($storagePath) {
@@ -20,7 +17,10 @@ class Sqlite implements Indexer {
 			throw new \InvalidArgumentException("Path $storagePath is not writable.");
 		}
 		$this->storagePath = $storagePath;
+		$this->initFieldSettings();
 	}
+
+	abstract protected function initFieldSettings();
 
 	protected function fetchRow(string $sql, callable $callback) {
 		$result = $this->db->query($sql);
@@ -28,8 +28,8 @@ class Sqlite implements Indexer {
 		return $row ? call_user_func($callback, $row) : NULL;
 	}
 
-	protected function fetchRowId(string $value) {
-		return $this->fetchRow("SELECT rowid FROM $this->primary WHERE $this->primary='$value'", function($row) {
+	protected function fetchRowId(string $primaryValue) {
+		return $this->fetchRow("SELECT rowid FROM $this->primary WHERE $this->primary='$primaryValue'", function($row) {
 			return $row ? $row[0] : 0;
 		});
 	}
@@ -60,8 +60,8 @@ class Sqlite implements Indexer {
 			$this->db->exec(sprintf("INSERT INTO %s (rowid, content) VALUES (%d, '%s')", $table, $rowId, \SQLite3::escapeString($record->get($table))));
 	}
 
-	public function delete(string $url) {
-		if ($rowId = $this->fetchRowId($url)) {
+	public function delete(string $primaryValue) {
+		if ($rowId = $this->fetchRowId($primaryValue)) {
 			$this->repeatQuery("DELETE FROM %s WHERE rowid=$rowId", $this->searchable);
 		}
 	}

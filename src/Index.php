@@ -1,6 +1,7 @@
 <?php
 namespace SimpleSearch;
 
+use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 
 class Index {
@@ -8,21 +9,16 @@ class Index {
 	protected $indexer;
 	protected $crawler;
 
-	public static function create() {
-		return new static();
-	}
-
 	public function __construct() {
 	}
 
-	public function setIndexer(Indexer $indexer) {
-		$this->indexer = $indexer;
-		return $this;
-	}
-
-	public function setCrawler(Crawler $crawler) {
-		$this->crawler = $crawler;
-		return $this;
+	public static function createDefaultRequest() {
+		return new Request(
+			$_SERVER['REQUEST_METHOD'],
+			$_SERVER['REQUEST_URI'],
+			[], // headers
+			'' // body
+		);
 	}
 
 	protected function rebuild() {
@@ -32,7 +28,8 @@ class Index {
 		$this->crawler->start();
 	}
 
-	public function handleRequest(RequestInterface $request) {
+	public function handleRequest(RequestInterface $request=NULL) {
+		if (!$request) $request = static::createDefaultRequest();
 		switch ($request->getMethod()) {
 		case 'POST':
 			$this->rebuild();

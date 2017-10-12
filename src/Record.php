@@ -9,19 +9,23 @@ abstract class Record {
 	protected $url;
 	protected $title;
 	protected $description;
-	protected $pageContent;
 
-	public static $properties = ['url','title','description','pageContent'];
+	protected static $primary = 'url';
+	protected static $searchable = ['title','description'];
 
-	public function __construct(string $url, string $html) {
+	public function __construct() {
+	}
+
+	public function hydrate(string $url, string $html) {
 		$this->url = $url;
 		$html5 = new HTML5();
 		$doc = $html5->loadHtml($html);
-		$this->hydrate($doc);
+		$this->fetchData($doc);
 	}
 
-	public static function create(string $url, string $html) {
-		return new static($url, $html);
+	protected function fetchData(\DomDocument $doc) {
+		$this->fetchTitle($doc);
+		$this->fetchDescription($doc);
 	}
 
 	protected function fetchTitle(\DomDocument $doc) {
@@ -38,22 +42,18 @@ abstract class Record {
 		);
 	}
 
-	abstract protected function fetchContent(\DomDocument $doc);
-
-	protected function hydrate(\DomDocument $doc) {
-		$this->fetchTitle($doc);
-		$this->fetchDescription($doc);
-		$this->fetchContent($doc);
+	public static function getPrimaryFieldName() {
+		return static::$primary;
 	}
 
-	public function getValues() {
-		foreach (static::$properties as $key) $values[] = $this->$key;
-		return $values;
+	public static function getSearchableFieldNames() {
+		return static::$searchable;
 	}
 
-	public function get($key) {
-		if (!in_array($key, static::$properties)) throw new \InvalidArgumentException("Invalid key $key.");
-		return $this->$key;
+	public function get($key='') {
+		$keys = empty($key) ? array_merge(['url'], static::$searchable) : [$key];
+		foreach ($keys as $key) if (isset($this->$key)) $values[] = $this->$key;
+		return count($keys) === 1 ? (isset($values) ? $values[0] : NULL) : (isset($values) ? $values : []);
 	}
 
 }

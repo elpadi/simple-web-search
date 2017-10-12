@@ -1,10 +1,17 @@
 <?php
-namespace SimpleSearch\Records;
+namespace SimpleSearch\Sites\RootBasics;
 
 use Functional as F;
-use SimpleSearch\Record;
 
-class RootBasics extends Record {
+class Record extends \SimpleSearch\Record {
+	
+	protected $pageContent;
+	protected static $searchable = ['title','description','pageContent'];
+
+	protected function fetchData(\DomDocument $doc) {
+		parent::fetchData($doc);
+		$this->fetchContent($doc);
+	}
 
 	protected function fetchContent(\DomDocument $doc) {
 		$page = $doc->getElementById('page');
