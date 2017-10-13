@@ -21,26 +21,37 @@ class Index {
 		);
 	}
 
+	protected function respond(string $msg) {
+		return new Response(
+			200,
+			[
+				'Content-Type' => 'application/json',
+			],
+			json_encode([
+				'message' => $msg
+			])
+		);
+	}
+
 	protected function rebuild() {
 		$this->indexer->init();
 		$this->indexer->deleteAll();
 		$this->crawler->setIndexer($this->indexer);
 		$this->crawler->start();
+		return $this->respond(sprintf('Index rebuilt. %d total records in index.', $this->indexer->count));
 	}
 
 	public function handleRequest(RequestInterface $request=NULL) {
 		if (!$request) $request = static::createDefaultRequest();
 		switch ($request->getMethod()) {
 		case 'POST':
-			$this->rebuild();
-			break;
+			return $this->rebuild();
 		case 'PUT':
 			break;
 		case 'DELETE':
 			break;
-		default:
-			throw new \BadMethodCallException(sprintf('Request method %s is not valid.', $request->getMethod()));
 		}
+		throw new \BadMethodCallException(sprintf('Request method %s is not valid.', $request->getMethod()));
 	}
 
 }

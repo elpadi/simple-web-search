@@ -11,6 +11,7 @@ class Results extends \SimpleSearch\Sqlite\Results {
 	public function handleRequest() {
 		$this->fetchMatches($_GET['q']);
 		$this->generateResults();
+		return $this->respond();
 	}
 
 }

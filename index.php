@@ -1,5 +1,4 @@
 <?php
-
 require(__DIR__.'/vendor/autoload.php');
 define('ROOT_DIR', __DIR__);
 
@@ -12,3 +11,5 @@ $dotenv->required('CRAWL_URL')->notEmpty();
 $classname = sprintf('SimpleSearch\Sites\%s\Index', getenv('SITE_NAME'));
 $index = new $classname();
 $response = $index->handleRequest();
+$response->send();
+

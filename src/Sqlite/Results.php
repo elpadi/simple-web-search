@@ -6,7 +6,6 @@ use Functional as F;
 abstract class Results extends \SimpleSearch\Results {
 
 	protected $db;
-	protected $count = 0;
 	protected $matches = [];
 	protected $records = [];
 	protected $tables = [];

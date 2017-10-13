@@ -11,6 +11,7 @@ abstract class Indexer implements \SimpleSearch\Indexer {
 	protected $primary = '';
 	protected $searchable = [];
 	protected $rowId = 0;
+	protected $count = 0;
 
 	public function __construct($storagePath) {
 		if (!(is_writable($storagePath) || (!file_exists($storagePath) && is_writable(dirname($storagePath))))) {
@@ -58,6 +59,7 @@ abstract class Indexer implements \SimpleSearch\Indexer {
 		$this->db->exec(sprintf('INSERT OR REPLACE INTO %s (rowid, %1$s) VALUES (%d, "%s")', $this->primary, $rowId, $primaryVal));
 		foreach ($this->searchable as $table)
 			$this->db->exec(sprintf("INSERT INTO %s (rowid, content) VALUES (%d, '%s')", $table, $rowId, \SQLite3::escapeString($record->get($table))));
+		$this->count++;
 	}
 
 	public function delete(string $primaryValue) {
