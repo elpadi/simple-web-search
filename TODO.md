@@ -6,4 +6,4 @@
 4. Blacklist URLs from Root Basics:
 	- Diseases/Glossary
 	- Blog index
-
+5. Remove ' - Root Basics' from titles.
